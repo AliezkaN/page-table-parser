@@ -14,8 +14,8 @@
 ## Features
 
 - Fetches an HTML page from a specified URL.
-- Parses the HTML content to extract table.
-- Provides REST API endpoint to retrieve table from the HTML page.
+- Parses the HTML content to extract tables.
+- Provides REST API endpoint to retrieve tables from the HTML page.
 
 ---
 
@@ -66,9 +66,10 @@ The application will run on `http://localhost:8080`
 
 - **GET /page-parser/parse**: Fetches and parses the HTML page to extract tables.
     - Parameters:
-        - url.
+        - url. (**required**)
+        - singleTable - (true|false) used to fetch single table or multiple tables. By default false 
     - Response:
-        - html table.
+        - html tables.
 
 ## Examples
 
