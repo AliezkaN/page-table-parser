@@ -30,7 +30,6 @@ public class ExceptionController {
         ErrorMessage errorMessage = new ErrorMessage();
 
         if (ex instanceof ServiceException) {
-            httpStatus = ((ServiceException) ex).getHttpStatus();
             errorMessage.setMessage(ex.getMessage());
         } else if (ex instanceof WebExchangeBindException) {
             httpStatus = HttpStatus.BAD_REQUEST;

@@ -1,20 +1,14 @@
 package com.aliezkan.pageparser.exception;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-@Data
 @EqualsAndHashCode(callSuper = true)
+@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 public abstract class ServiceException extends RuntimeException {
-
-    private HttpStatus httpStatus;
 
     public ServiceException(String message) {
         super(message);
-    }
-
-    public HttpStatus getHttpStatus(){
-        return HttpStatus.INTERNAL_SERVER_ERROR;
     }
 }
