@@ -75,3 +75,4 @@ The application will run on `http://localhost:8080`
 To retrieve an HTML page from a specific URL, open your web browser and enter the following URL in the address bar:
 
 - http://localhost:8080/page-parser/parse?url=https://www.worldometers.info/geography/how-many-countries-are-there-in-the-world/
+![img.png](usage.png)
