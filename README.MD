@@ -80,7 +80,9 @@ To retrieve an HTML page from a specific URL, open your web browser and enter th
 
 
 - https://www.worldometers.info/geography/how-many-countries-are-there-in-the-world/
+
 ![website.png](website.png)
 
 - http://localhost:8080/page-parser/parse?url=https://www.worldometers.info/geography/how-many-countries-are-there-in-the-world/
+
 ![usage.png](usage.png)
