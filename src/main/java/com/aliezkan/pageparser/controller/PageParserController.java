@@ -22,6 +22,6 @@ public class PageParserController {
 
     @GetMapping(value = "/parse", produces = MediaType.TEXT_HTML_VALUE)
     public Mono<String> getPage(@Valid PageParserRequest request){
-        return service.parse(request.getUrl());
+        return service.parse(request.getUrl(), request.isSingleTable());
     }
 }

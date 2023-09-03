@@ -11,4 +11,6 @@ public class PageParserRequest {
     @NotBlank
     @URL
     private String url;
+
+    private boolean singleTable = false;
 }

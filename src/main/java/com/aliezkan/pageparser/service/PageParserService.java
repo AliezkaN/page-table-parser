@@ -12,16 +12,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import reactor.core.publisher.Mono;
 
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Validated
 public class PageParserService {
 
     private final HtmlFetchService htmlFetchService;
-    public Mono<String> parse(@NonNull String url) {
+
+    public Mono<String> parse(@NonNull String url, boolean singleTable) {
         return htmlFetchService.fetchHtml(url)
                 .map(this::getTableFromHtml)
-                .map(this::formatTableWithStyles)
+                .map(elements -> formatTableWithStyles(elements, singleTable))
                 .filter(StringUtils::isNotBlank)
                 .switchIfEmpty(Mono.error(new TableNotFoundException()))
                 .cache();
@@ -32,20 +35,24 @@ public class PageParserService {
         return document.select("table");
     }
 
-    private String formatTableWithStyles(Elements tableElements) {
-        if (tableElements.size() > 0) {
-            Element table = tableElements.get(0);
+    private String formatTableWithStyles(Elements tableElements, boolean singleTable) {
 
-            table.attr("class", "beautiful-table");
-            table.attr("style", "border-collapse: collapse; width: 100%;");
+        return tableElements.stream()
+                .limit(singleTable ? 1 : tableElements.size())
+                .peek(tableElement -> {
+                    tableElement.attr("class", "beautiful-table");
+                    tableElement.attr("style", "border-collapse: collapse; width: 100%; margin-bottom: 15px");
 
-            Elements tableHeaders = table.select("th");
-            Elements tableCells = table.select("td");
+                    Elements tableHeaders = tableElement.select("th");
+                    Elements tableCells = tableElement.select("td");
 
-            tableHeaders.attr("style", "background-color: #f2f2f2; padding: 8px; text-align: left;");
-            tableCells.attr("style", "border: 1px solid #ddd; padding: 8px; text-align: left;");
-        }
+                    tableHeaders.attr("style", "background-color: #f2f2f2; padding: 8px; text-align: left;");
+                    tableCells.attr("style", "border: 1px solid #ddd; padding: 8px; text-align: left;");
 
-        return tableElements.toString();
+                    Element marginDiv = new Element("div");
+                    marginDiv.attr("style", "margin: 20px 0;");
+                })
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Elements::new))
+                .toString();
     }
 }
