@@ -50,6 +50,7 @@ To get started with this project, follow these steps:
    ```shell
    mvn clean install
    ```
+---
 
 ## Usage
 
@@ -61,6 +62,7 @@ Start the Spring Boot application:
 
 The application will run on `http://localhost:8080`
 
+---
 
 ## API Endpoints
 
@@ -70,6 +72,7 @@ The application will run on `http://localhost:8080`
         - singleTable - (true|false) used to fetch single table or multiple tables. By default false 
     - Response:
         - html tables.
+---
 
 ## Examples
 
