@@ -1,6 +1,8 @@
 package com.aliezkan.pageparser.exception;
 
-public class TableNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class TableNotFoundException extends ServiceException {
 
     private static final String DEFAULT_MESSAGE = "Table tag in html response in provided url is not found";
 
@@ -10,5 +12,10 @@ public class TableNotFoundException extends RuntimeException {
 
     public TableNotFoundException(String message) {
         super(message);
+    }
+
+    @Override
+    public HttpStatus getHttpStatus() {
+        return HttpStatus.NOT_FOUND;
     }
 }
