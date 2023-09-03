@@ -3,8 +3,8 @@ package com.aliezkan.pageparser.controller;
 import com.aliezkan.pageparser.dto.out.ErrorMessage;
 import com.aliezkan.pageparser.exception.TableNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,6 +13,7 @@ import org.springframework.web.server.ServerWebExchange;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.AbstractMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -20,21 +21,31 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ExceptionController {
 
-    @ExceptionHandler({TableNotFoundException.class})
+    @ExceptionHandler({TableNotFoundException.class, WebExchangeBindException.class})
     public ErrorMessage handleException(@NotNull ServerWebExchange serverWebExchange, Exception ex) {
-        System.out.println(ex);
-        return new ErrorMessage();
-    }
+        ResponseStatus responseStatus = AnnotationUtils.findAnnotation(ex.getClass(), ResponseStatus.class);
+        HttpStatus httpStatus = responseStatus != null ? responseStatus.value() : HttpStatus.OK;
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(WebExchangeBindException.class)
-    public ErrorMessage handleValidationExceptions(WebExchangeBindException ex) {
-        Map<String, String> validationErrors = ex.getFieldErrors().stream()
-                .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
         ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.setCode(HttpStatus.BAD_REQUEST.value());
-        errorMessage.setValidationErrors(validationErrors);
+
+        if (ex instanceof TableNotFoundException) {
+            httpStatus = HttpStatus.BAD_REQUEST;
+            errorMessage.setMessage(ex.getMessage());
+        } else if (ex instanceof WebExchangeBindException) {
+            WebExchangeBindException exception = (WebExchangeBindException) ex;
+            httpStatus = HttpStatus.BAD_REQUEST;
+            errorMessage.setMessage("Validation Exception");
+            errorMessage.setValidationErrors(
+                    exception.getFieldErrors()
+                            .stream()
+                            .map(x -> new AbstractMap.SimpleEntry<>(x.getField(), x.getDefaultMessage()))
+                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+        }
+
+        errorMessage.setCode(httpStatus.value());
         errorMessage.setTimestamp(LocalDateTime.now());
+        serverWebExchange.getResponse().setStatusCode(httpStatus);
         return errorMessage;
     }
+
 }

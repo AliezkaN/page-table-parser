@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class PageParserRequest {
 
-    @NotBlank(message = "url must not be blank")
+    @NotBlank
     @URL
     private String url;
 }
