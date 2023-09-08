@@ -40,17 +40,13 @@ public class PageParserService {
         return tableElements.stream()
                 .limit(singleTable ? 1 : tableElements.size())
                 .peek(tableElement -> {
-                    tableElement.attr("class", "beautiful-table");
                     tableElement.attr("style", "border-collapse: collapse; width: 100%; margin-bottom: 15px");
-
                     Elements tableHeaders = tableElement.select("th");
                     Elements tableCells = tableElement.select("td");
-
-                    tableHeaders.attr("style", "background-color: #f2f2f2; padding: 8px; text-align: left;");
+                    tableHeaders.attr("style", "border: 1px solid #ddd; background-color: #f2f2f2; padding: 8px; text-align: left;");
                     tableCells.attr("style", "border: 1px solid #ddd; padding: 8px; text-align: left;");
-
-                    Element marginDiv = new Element("div");
-                    marginDiv.attr("style", "margin: 20px 0;");
+                    Elements anchorElements = tableElement.select("a");
+                    anchorElements.removeAttr("href");
                 })
                 .collect(Collectors.collectingAndThen(Collectors.toList(), Elements::new))
                 .toString();
