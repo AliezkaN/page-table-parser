@@ -37,11 +37,18 @@ jobs:
           name: app-jar
           path: target/
 
+      - name: Get current tag count
+        id: get_tag_count
+        run: echo "::set-output name=tag_count::$(docker search aliezkaa/page-parser --limit 1 | wc -l)"
+
+      - name: Increment tag count
+        id: increment_tag_count
+        run: echo "::set-output name=new_tag_count::$(( ${{ steps.get_tag_count.outputs.tag_count }} + 1 ))"
+
       - name: Build and Push Docker image
         run: |
           JAR_FILE=$(find target -name "*.jar")
           echo "Found JAR file: $JAR_FILE"
-          TAG=$(date +%Y%m%d%H%M%S)
-          docker build -t docker.io/aliezkaa/page-parser:$TAG .
+          docker build -t docker.io/aliezkaa/page-parser:${{ steps.increment_tag_count.outputs.new_tag_count }} .
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker push docker.io/aliezkaa/page-parser:$TAG
+          docker push docker.io/aliezkaa/page-parser:${{ steps.increment_tag_count.outputs.new_tag_count }}
