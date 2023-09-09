@@ -41,6 +41,7 @@ jobs:
         run: |
           JAR_FILE=$(find target -name "*.jar")
           echo "Found JAR file: $JAR_FILE"
-          docker build -t docker.io/aliezkaa/page-parser:latest .
+          TAG=$(date +%Y%m%d%H%M%S)
+          docker build -t docker.io/aliezkaa/page-parser:$TAG .
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker push docker.io/aliezkaa/page-parser:latest
