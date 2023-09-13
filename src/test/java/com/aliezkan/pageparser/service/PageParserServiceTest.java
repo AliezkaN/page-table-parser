@@ -28,15 +28,15 @@ public class PageParserServiceTest {
     List<DynamicNode> test() {
         return List.of(
                 DynamicTest.dynamicTest("expect table html tag", () -> {
-                    when(htmlFetchService.fetchHtml(Util.URL_WITH_TABLE)).thenReturn(Mono.just(Util.HTML_BODY_WITH_TABLE));
-                    Mono<String> result = pageParserService.parse(Util.URL_WITH_TABLE, true);
+                    when(htmlFetchService.fetchHtml(Util.URL_WITH_TABLE, Util.AUTHORIZATION_TOKEN)).thenReturn(Mono.just(Util.HTML_BODY_WITH_TABLE));
+                    Mono<String> result = pageParserService.parse(Util.URL_WITH_TABLE, true, Util.AUTHORIZATION_TOKEN);
                     StepVerifier.create(result)
                             .expectNext(Util.PARSER_RESPONSE)
                             .verifyComplete();
                 }),
                 DynamicTest.dynamicTest("expect TableNotFoundException thrown", () -> {
-                    when(htmlFetchService.fetchHtml(Util.URL_WITHOUT_TABLE)).thenReturn(Mono.just(Util.HTML_BODY_WITHOUT_TABLE));
-                    Mono<String> result = pageParserService.parse(Util.URL_WITHOUT_TABLE, true);
+                    when(htmlFetchService.fetchHtml(Util.URL_WITHOUT_TABLE, Util.AUTHORIZATION_TOKEN)).thenReturn(Mono.just(Util.HTML_BODY_WITHOUT_TABLE));
+                    Mono<String> result = pageParserService.parse(Util.URL_WITHOUT_TABLE, true, Util.AUTHORIZATION_TOKEN);
                     StepVerifier.create(result)
                             .expectError(TableNotFoundException.class)
                             .verify();
@@ -51,5 +51,6 @@ public class PageParserServiceTest {
         private static final String HTML_BODY_WITH_TABLE = "<html><body><table></table></body></html>";
         private static final String HTML_BODY_WITHOUT_TABLE = "<html><body></body></html>";
         private static final String PARSER_RESPONSE = "<table style=\"border-collapse: collapse; width: 100%; margin-bottom: 15px\"></table>";
+        private static final String AUTHORIZATION_TOKEN = "JUST_TOKEN";
     }
 }

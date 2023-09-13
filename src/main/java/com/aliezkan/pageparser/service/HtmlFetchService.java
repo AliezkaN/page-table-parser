@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.util.annotation.Nullable;
 
 @Service
 @RequiredArgsConstructor
@@ -17,9 +18,11 @@ public class HtmlFetchService {
 
     private final WebClient webClient;
 
-    public Mono<String> fetchHtml(@NonNull String url) {
+    public Mono<String> fetchHtml(@NonNull String url, @Nullable String authorizationToken) {
+        System.out.println(authorizationToken);
         return webClient.get()
                 .uri(url)
+                .header("Authorization", authorizationToken)
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError, this::handleClientError)
                 .bodyToMono(String.class)

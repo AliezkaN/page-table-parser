@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -21,8 +20,8 @@ public class PageParserService {
 
     private final HtmlFetchService htmlFetchService;
 
-    public Mono<String> parse(@NonNull String url, boolean singleTable) {
-        return htmlFetchService.fetchHtml(url)
+    public Mono<String> parse(@NonNull String url, boolean singleTable, String authorizationToken) {
+        return htmlFetchService.fetchHtml(url, authorizationToken)
                 .map(this::getTableFromHtml)
                 .map(elements -> formatTableWithStyles(elements, singleTable))
                 .filter(StringUtils::isNotBlank)
