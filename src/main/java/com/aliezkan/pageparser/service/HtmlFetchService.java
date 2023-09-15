@@ -19,7 +19,6 @@ public class HtmlFetchService {
     private final WebClient webClient;
 
     public Mono<String> fetchHtml(@NonNull String url, @Nullable String authorizationToken) {
-        System.out.println(authorizationToken);
         return webClient.get()
                 .uri(url)
                 .header("Authorization", authorizationToken)
